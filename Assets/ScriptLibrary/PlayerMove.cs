@@ -1,33 +1,39 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class PlayerMove : MonoBehaviour
 {
-    [SerializeField] private Camera _camera;
-    [SerializeField] private LayerMask _groundMask;
+    [SerializeField] private Transform _transformPlayer;
+    [SerializeField] private Rigidbody _rbPlayer;
+    [SerializeField] private float _playerSpeed;
+    [SerializeField] private float _dashImpulse;
 
-    private PlayerComponents _components;
-    private Ray _ray;
-    private float _distanceRay = 1000;
+    private Vector3 _rotationPlayer;
+    private Vector3 _deshRotation;
 
-    private void Start()
+    private void Update()
     {
-        _components = this.gameObject.GetComponent<PlayerComponents>();
+        WalkingPlayer();
+        PlayerDash();
     }
 
-    void Update()
+    private void WalkingPlayer()
     {
-        LeadingPoint();
-    }
-
-    private void LeadingPoint()
-    {
-        _ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
         {
-            Physics.Raycast(_ray, out hit, _distanceRay, _groundMask);
-            _components.NavMeshAgent.destination = hit.point;
+            _rbPlayer.velocity = new Vector3(Input.GetAxis("Horizontal") * _playerSpeed, 0, Input.GetAxis("Vertical") * _playerSpeed);
+            _rotationPlayer = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            _transformPlayer.rotation = Quaternion.LookRotation(_rotationPlayer);
+        }
+    }
+
+    private void PlayerDash()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            _deshRotation = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+            _rbPlayer.velocity = _deshRotation * _dashImpulse;
         }
     }
 }

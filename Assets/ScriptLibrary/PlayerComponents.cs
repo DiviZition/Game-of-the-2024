@@ -4,7 +4,6 @@ using UnityEngine.AI;
 public class PlayerComponents : MonoBehaviour
 {
     public Transform Transform { get; private set; }
-    public NavMeshAgent NavMeshAgent { get; private set; }
     public Collider Collider { get; private set; }
 
     public PlayerMove Move { get; private set; }
@@ -18,7 +17,6 @@ public class PlayerComponents : MonoBehaviour
     private void GetUnityComponents()
     {
         Transform = this.transform;
-        NavMeshAgent = this.GetComponent<NavMeshAgent>();
         Collider = this.GetComponent<Collider>();
     }
 
