@@ -4,15 +4,25 @@ using UnityEngine;
 
 public class CameraMain : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private Transform _transformCentralAxis;
+    [SerializeField] private Transform _transformCamera;
+    [SerializeField] private Vector3 _startOffset;
+    [SerializeField] private Vector3 _startRotateon;
+
+    private Quaternion _cameraRotation;
+
+    private void Start()
     {
-        
+        _cameraRotation.eulerAngles = _startRotateon;
+        _transformCamera.rotation = _cameraRotation;
+    }
+    private void Update()
+    {
+        CameraDinamicOffset();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void CameraDinamicOffset()
     {
-        
+        _transformCamera.localPosition = _startOffset;
     }
 }
