@@ -3414,6 +3414,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _transformCentralAxis: {fileID: 1785686787}
   _transformCamera: {fileID: 522811755}
+  _scrollScaller: 0.5
   _startOffset: {x: 0, y: 6, z: -9}
   _startRotateon: {x: 25, y: 0, z: 0}
 --- !u!1001 &559031739
@@ -11282,8 +11283,7 @@ MonoBehaviour:
   _transformPlayer: {fileID: 5078153266977553644}
   _ownTransform: {fileID: 1785686787}
   _angleOfRotation: 90
-  _strideLenght: 1
-  _stepTime: 0.01
+  _stepTime: 1
 --- !u!4 &1785686787
 Transform:
   m_ObjectHideFlags: 0
@@ -13218,6 +13218,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7571290297246131781, guid: a2e9e5829c280eb439f560bd45020979,
+        type: 3}
+      propertyPath: _rotateSpeed
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7675031678770878366, guid: a2e9e5829c280eb439f560bd45020979,
         type: 3}

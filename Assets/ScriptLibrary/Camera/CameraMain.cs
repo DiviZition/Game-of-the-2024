@@ -6,6 +6,7 @@ public class CameraMain : MonoBehaviour
 {
     [SerializeField] private Transform _transformCentralAxis;
     [SerializeField] private Transform _transformCamera;
+    [SerializeField] private float _scrollScaller;
     [SerializeField] private Vector3 _startOffset;
     [SerializeField] private Vector3 _startRotateon;
 
@@ -15,6 +16,7 @@ public class CameraMain : MonoBehaviour
     {
         _cameraRotation.eulerAngles = _startRotateon;
         _transformCamera.rotation = _cameraRotation;
+        _transformCamera.localPosition = _startOffset;
     }
     private void Update()
     {
@@ -23,6 +25,10 @@ public class CameraMain : MonoBehaviour
 
     private void CameraDinamicOffset()
     {
-        _transformCamera.localPosition = _startOffset;
+        if (Input.mouseScrollDelta != Vector2.zero)
+        {
+            float scrollDelta = Input.mouseScrollDelta.y;
+            _transformCamera.localPosition += new Vector3(0, -_scrollScaller/2 * scrollDelta, _scrollScaller * scrollDelta);
+        }
     }
 }

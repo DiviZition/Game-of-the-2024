@@ -6,6 +6,7 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private Rigidbody _rbPlayer;
     [SerializeField] private float _playerSpeed;
     [SerializeField] private float _dashImpulse;
+    [SerializeField] private float _rotateSpeed;
     [SerializeField] private float _gravityModifier;
 
     private Vector3 _rotationPlayer;
@@ -24,7 +25,11 @@ public class PlayerMove : MonoBehaviour
         {
             _rbPlayer.velocity = new Vector3(Input.GetAxis("Horizontal") * _playerSpeed, _rbPlayer.velocity.y, Input.GetAxis("Vertical") * _playerSpeed);
             _rotationPlayer = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-            _transformPlayer.rotation = Quaternion.LookRotation(_rotationPlayer);
+        }
+
+        if (_rotationPlayer.magnitude > Mathf.Abs(0.05f))
+        {
+            _transformPlayer.rotation = Quaternion.Lerp( _transformPlayer.rotation, Quaternion.LookRotation(_rotationPlayer), Time.deltaTime * _rotateSpeed);
         }
     }
 
