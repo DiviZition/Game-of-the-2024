@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraRotation : MonoBehaviour
@@ -7,67 +6,44 @@ public class CameraRotation : MonoBehaviour
     [SerializeField] private Transform _transformPlayer;
     [SerializeField] private Transform _ownTransform;
     [SerializeField] private float _angleOfRotation;
-    [SerializeField] private float _stepTime;
+    [SerializeField] private float _rotationSpeed;
 
-    private float _timeScaler = 100;
+    private float _timeScaler = 0.5f;
     private float _strideLenght = 1;
     private bool _enabledInput = true;
     private Quaternion _rotationAxis;
     private Vector3 _currentAngle;
 
-    private void Start()
-    {
-        _currentAngle = _ownTransform.rotation.eulerAngles;
-    }
     private void Update()
     {
         _ownTransform.position = _transformPlayer.position;
 
-        IEnumerator enumerator1 = RotationThisLeft();
-        IEnumerator enumerator2 = RotationThisRight();
-
         if (Input.GetKeyDown(KeyCode.E))
         {
-            StartCoroutine(enumerator2);
+            StartCoroutine(RotationThisLeft(-1));
         }
-
         else if (Input.GetKeyDown(KeyCode.Q))
         {
-            StartCoroutine(enumerator1);
+            StartCoroutine(RotationThisLeft(1));
         }
     }
 
-    private IEnumerator RotationThisLeft()
+    private IEnumerator RotationThisLeft(float strideLengthMultiplier)
     {
         if (_enabledInput == true)
         {
             _enabledInput = false;
+
             for (int i = 0; i < _angleOfRotation; i++)
             {
-                _rotationAxis.eulerAngles = new Vector3(0, _currentAngle.y + _strideLenght, 0);
+                _rotationAxis.eulerAngles = new Vector3(0, _currentAngle.y + (_strideLenght * strideLengthMultiplier), 0);
                 _ownTransform.rotation = _rotationAxis;
                 _currentAngle = _ownTransform.rotation.eulerAngles;
 
-                yield return new WaitForSeconds(_stepTime / _timeScaler);
+                yield return new WaitForSeconds(_timeScaler / _rotationSpeed);
             }
+
             _enabledInput = true;
-        }
-    }
-
-    private IEnumerator RotationThisRight()
-    {
-        if (_enabledInput == true)
-        {
-            _enabledInput = false;
-            for (int i = 0; i < _angleOfRotation; i++)
-            {
-                _rotationAxis.eulerAngles = new Vector3(0, _currentAngle.y + (_strideLenght * -1), 0);
-                _ownTransform.rotation = _rotationAxis;
-                _currentAngle = _ownTransform.rotation.eulerAngles;
-
-                yield return new WaitForSeconds(_stepTime / _timeScaler);
-            }
-            _enabledInput=true;
         }
     }
 }

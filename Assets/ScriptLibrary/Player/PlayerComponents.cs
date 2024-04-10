@@ -5,7 +5,7 @@ public class PlayerComponents : MonoBehaviour
     public Transform Transform { get; private set; }
     public Collider Collider { get; private set; }
 
-    public PlayerMove Move { get; private set; }
+    public PlayerMovier Move { get; private set; }
     public HealthComponent Health { get; private set; }
     public PlayerInteractor Interactor { get; private set; }
 
@@ -23,7 +23,7 @@ public class PlayerComponents : MonoBehaviour
 
     private void GetScripts()
     {
-        Move = this.GetComponent<PlayerMove>();
+        Move = this.GetComponent<PlayerMovier>();
         Health = this.GetComponent<HealthComponent>();
         Interactor = this.GetComponent<PlayerInteractor>();
     }
