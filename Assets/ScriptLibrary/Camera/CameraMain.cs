@@ -19,7 +19,7 @@ public class CameraMain : MonoBehaviour
         _transformCamera.localPosition = _startOffset;
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         _scrollDelta = Input.mouseScrollDelta.y;
         _distanceToCamera = FastSquareRoot((_transformCentralAxis.position - _transformCamera.position).sqrMagnitude);

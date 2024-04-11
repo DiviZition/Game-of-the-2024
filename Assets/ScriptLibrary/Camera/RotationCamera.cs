@@ -8,7 +8,7 @@ public class CameraRotation : MonoBehaviour
     [SerializeField] private float _angleOfRotation;
     [SerializeField] private float _rotationSpeed;
 
-    private float _timeScaler = 0.5f;
+    private float _timeStep = 0.01f;
     private float _strideLenght = 1;
     private bool _enabledInput = true;
     private Quaternion _rotationAxis;
@@ -20,11 +20,11 @@ public class CameraRotation : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            StartCoroutine(RotationThisLeft(-1));
+            StartCoroutine(RotationThisLeft(-_rotationSpeed));
         }
         else if (Input.GetKeyDown(KeyCode.Q))
         {
-            StartCoroutine(RotationThisLeft(1));
+            StartCoroutine(RotationThisLeft(_rotationSpeed));
         }
     }
 
@@ -34,13 +34,14 @@ public class CameraRotation : MonoBehaviour
         {
             _enabledInput = false;
 
-            for (int i = 0; i < _angleOfRotation; i++)
+            for (int i = 0; i < _angleOfRotation / Mathf.Abs(strideLengthMultiplier); i++)
             {
                 _rotationAxis.eulerAngles = new Vector3(0, _currentAngle.y + (_strideLenght * strideLengthMultiplier), 0);
                 _ownTransform.rotation = _rotationAxis;
                 _currentAngle = _ownTransform.rotation.eulerAngles;
 
-                yield return new WaitForSeconds(_timeScaler / _rotationSpeed);
+                yield return null;
+                //yield return new WaitForSeconds(_timeStep);
             }
 
             _enabledInput = true;
