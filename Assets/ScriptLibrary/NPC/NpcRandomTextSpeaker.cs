@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -98,7 +97,7 @@ public class NpcRandomTextSpeaker : MonoBehaviour
     {
         _randomSpeakOffset = Random.Range(0f, 1f);
 
-        if (_speakers[creature].PingSpeaker())
+        if (_speakers[creature].PingSpeaker() == true)
             _speakersTimers[creature] = Time.time + _speakers[creature].SpeachCoolDown + _randomSpeakOffset;
         else
             _speakersTimers[creature] = Time.time + _speakers[creature].IgnorSpeakCoolDown + _randomSpeakOffset;

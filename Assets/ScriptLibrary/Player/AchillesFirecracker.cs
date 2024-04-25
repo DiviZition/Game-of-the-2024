@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AchillesFirecracker : MonoBehaviour
@@ -7,15 +5,13 @@ public class AchillesFirecracker : MonoBehaviour
     [SerializeField] private Camera _camera;
     [SerializeField] private GameObject _attackMaker;
     [SerializeField] private Transform _handTransform;
-    [SerializeField] private Transform _playerTransform;
     [SerializeField] private Transform _spawnBulletTransform;
     [SerializeField] private float _ballisticsAngle;
 
-    [SerializeField] private GameObject _petard;
-    [SerializeField] private SphereCollider _collider;
     [SerializeField] private MeshRenderer _petardVisual;
-    [SerializeField] private float _radiusAffectedArea;
-    [SerializeField] private float _bindingTime;
+    [SerializeField] private Rigidbody _petardPrefab;
+
+    private Transform _playerTransform;
 
     private float _throwForce;
     private float _graviti = Physics.gravity.y;
@@ -24,10 +20,9 @@ public class AchillesFirecracker : MonoBehaviour
 
     private void Start()
     {
-        _spawnBulletTransform.rotation = Quaternion.EulerRotation(new Vector3(_ballisticsAngle, 0, 0));
-        _collider.enabled = false;
-        _petardVisual.enabled = false;
-        _attackMaker.active = false;
+        _playerTransform = this.transform;
+        _spawnBulletTransform.rotation = Quaternion.Euler(new Vector3(_ballisticsAngle, 0, 0));
+        SwitchActive(false);
     }
 
     private void Update()
@@ -35,46 +30,84 @@ public class AchillesFirecracker : MonoBehaviour
         _spawnBulletTransform.position = _handTransform.position;
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            _active = true;
+            _active = !_active;
+            SwitchActive(_active);
         }
 
-        AttackMode(_active);
+        if (_active == true)
+        {
+            GetMarkerPosition();
+            RotatePlayer();
+
+            VisualizePetard();
+            VisualizeCrossHair();
+
+            ThrowPetard();
+        }
     }
 
-    private void AttackMode(bool modActive)
+    private void GetMarkerPosition()
     {
-        if (modActive == true)
+        Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+
+        Physics.Raycast(ray, out RaycastHit hitInfo);
+        _attackPoint = hitInfo.point;
+    }
+
+    private void SwitchActive(bool isActive)
+    {
+        _petardVisual.enabled = isActive;
+        _attackMaker.SetActive(false);
+    }
+
+    private void VisualizePetard()
+    {
+        _petardVisual.enabled = true;
+    }
+
+    private void VisualizeCrossHair()
+    {
+        _attackMaker.transform.position = _attackPoint;
+        _attackMaker.SetActive(true);
+    }
+
+    private void RotatePlayer()
+    {
+        Vector3 loockRotation = _attackPoint - _spawnBulletTransform.position;
+        loockRotation.y = 0;
+
+        _playerTransform.rotation = Quaternion.LookRotation(loockRotation, Vector3.up);
+    }
+
+    private void ThrowPetard()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0) == true)
         {
-            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+            Transform petardVisualTransform = _petardVisual.transform;
+            Rigidbody newPetard = Instantiate(_petardPrefab, petardVisualTransform.position, petardVisualTransform.rotation);
 
-            _petard.transform.position = _spawnBulletTransform.position;
-            _petardVisual.enabled = true;
+            newPetard.velocity = CalculateThrowDirection();
 
-            Physics.Raycast(ray, out RaycastHit hitInfo);
-            _attackPoint = hitInfo.point;
-            _attackMaker.transform.position = _attackPoint;
-            _attackMaker.active = true;
-
-            Vector3 fromTo = _attackPoint - _playerTransform.position;
-            Vector3 fromToXZ = new Vector3(fromTo.x, 0f, fromTo.z);
-
-            _playerTransform.rotation = Quaternion.LookRotation(fromToXZ,Vector3.up);
-
-            if (Input.GetButtonDown("Fire1"))
-            {
-                float x = fromToXZ.magnitude;
-                float y = fromTo.y;
-
-                float angleOfRadians = _ballisticsAngle * Mathf.PI / 180;
-
-                float throwForce2 = (_graviti * x * x) / (2 * (y - Mathf.Tan(angleOfRadians) * x) * Mathf.Pow(Mathf.Cos(angleOfRadians), 2));
-
-                _throwForce = Mathf.Sqrt(Mathf.Abs(throwForce2));
-
-                _petard.GetComponent<Rigidbody>().velocity = _spawnBulletTransform.forward * _throwForce;
-
-                _active = false;
-            }
+            _active = false;
+            SwitchActive(false);
         }
+    }
+
+    private Vector3 CalculateThrowDirection()
+    {
+        Vector3 fromTo = _attackPoint - _spawnBulletTransform.position;
+        float directionY = fromTo.y;
+        fromTo.y = 0;
+
+        float x = fromTo.magnitude;
+        float y = directionY;
+
+        float angleOfRadians = _ballisticsAngle * Mathf.PI / 180;
+
+        float throwForce2 = (_graviti * x * x) / (2 * (y - Mathf.Tan(angleOfRadians) * x) * Mathf.Pow(Mathf.Cos(angleOfRadians), 2));
+
+        _throwForce = Mathf.Sqrt(Mathf.Abs(throwForce2));
+
+        return _spawnBulletTransform.forward * _throwForce;
     }
 }

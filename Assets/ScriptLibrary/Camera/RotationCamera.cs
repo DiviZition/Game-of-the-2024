@@ -8,7 +8,6 @@ public class CameraRotation : MonoBehaviour
     [SerializeField] private float _angleOfRotation;
     [SerializeField] private float _rotationSpeed;
 
-    private float _timeStep = 0.01f;
     private float _strideLenght = 1;
     private bool _enabledInput = true;
     private Quaternion _rotationAxis;
