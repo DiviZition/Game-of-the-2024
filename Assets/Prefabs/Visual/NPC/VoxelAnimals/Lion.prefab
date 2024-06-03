@@ -427,7 +427,9 @@ GameObject:
   - component: {fileID: 54254021876192096}
   - component: {fileID: 65306087575105876}
   - component: {fileID: 95995790678533120}
-  - component: {fileID: 114412009841591444}
+  - component: {fileID: 1096698891552194412}
+  - component: {fileID: 1121297582978245745}
+  - component: {fileID: 2107793397845566286}
   m_Layer: 0
   m_Name: Lion
   m_TagString: Untagged
@@ -526,7 +528,29 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &114412009841591444
+--- !u!195 &1096698891552194412
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553991042791506}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 1.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &1121297582978245745
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -535,12 +559,33 @@ MonoBehaviour:
   m_GameObject: {fileID: 1553991042791506}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40079260bda69f14c80332a04d1632a6, type: 3}
+  m_Script: {fileID: 11500000, guid: d5092d3d636e9ca47b1188ec49e7c0a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 3
-  jumpForce: 300
-  timeBeforeNextJump: 1.2
+  _startHealth: 0
+  _damageInvulnerabilityTime: 0
+--- !u!114 &2107793397845566286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553991042791506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee2e65a8f6457524290420d28aee4c04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _agent: {fileID: 1096698891552194412}
+  _homeCenter: {fileID: 0}
+  _agentPosition: {fileID: 0}
+  _agressorPosition: {fileID: 0}
+  _pursuitDistance: 0
+  _calmnessDistance: 0
+  _screamDistance: 0
+  _speed: 0
+  _speedMultiplier: 0
+  _resetDestinationTimer: 0
 --- !u!1 &1559099344501894
 GameObject:
   m_ObjectHideFlags: 0
