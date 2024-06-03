@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class SpawwnZone : MonoBehaviour
 {
-    [SerializeField] private GameObject _predatorPrefab;
+    [SerializeField] private AIAnimal _predatorPrefab;
     [SerializeField] private Transform _zoneCenter;
+
+    [SerializeField] private PlayerComponents _player;
     
     private void Start()
     {
         _zoneCenter = GetComponent<Transform>();
-        Instantiate(_predatorPrefab, _zoneCenter.position , Quaternion.identity);
+
+        AIAnimal lion = Instantiate(_predatorPrefab, _zoneCenter.position , Quaternion.identity, this.transform);
+        lion.CreateEnemy(_player, this.transform);
     }
 }

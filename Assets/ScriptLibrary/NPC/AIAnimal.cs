@@ -1,33 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class AIAnimal : MonoBehaviour
 {
     [SerializeField] private NavMeshAgent _agent;
-    [SerializeField] private Transform _homeCenter;
-    [SerializeField] private Transform _agentPosition;
-    [SerializeField] private Transform _agressorPosition;
-    [SerializeField] private LayerMask _layerMask;
+    [SerializeField] private LayerMask _playerMask;
 
     [SerializeField] private float _pursuitDistance;
     [SerializeField] private float _screamDistance;
 
     [SerializeField] private float _speed;
     [SerializeField] private float _speedMultiplier;
-    [SerializeField] private float _resetDestinationTimer;
+    [SerializeField] private float _checkForPlayerDelay = 1;
+    [SerializeField] private float _walkDelay = 5;
+
+    private Transform _transform;
+    private Transform _homeCenter;
+    private Transform _player;
 
     private Vector3 _newDestination;
     private Vector3 _newRandom;
-    private float _timer;
     private float _visibility;
+
+    private float _walkTimer;
+    private float _checkPlayerTimer;
 
     private bool _isHeAggressive = false;
     private bool _doesHeKnow;
 
     private void Start()
     {
+        _transform = this.transform;
         NewRandomTaget();
         _agent.speed = _speed;
     }
@@ -35,6 +38,7 @@ public class AIAnimal : MonoBehaviour
     private void Update()
     {
         BeastVision();
+
         if (_isHeAggressive == false)
         {
             StateOfCalm();
@@ -45,66 +49,69 @@ public class AIAnimal : MonoBehaviour
         }
     }
 
+    public void CreateEnemy(PlayerComponents player, Transform homeZone)
+    {
+        _player = player.Transform;
+        _homeCenter = homeZone;
+    }
+
     private void BeastVision()
     {
-        RaycastHit hit;
-        _timer = _resetDestinationTimer;
-        _timer -= Time.deltaTime;
+        _checkPlayerTimer -= Time.deltaTime;
 
-        if (_timer == 0)
+        if (_checkPlayerTimer <= 0)
         {
-            _doesHeKnow = Physics.SphereCast(_agentPosition.position, _screamDistance, _agentPosition.forward, out hit, _layerMask);
-            _timer = _resetDestinationTimer;
+            Collider[] trash = Physics.OverlapSphere(_transform.position, _screamDistance, _playerMask);
+
+            _doesHeKnow = trash.Length > 0;
+            _checkPlayerTimer = _checkForPlayerDelay;
         }
 
         if (_doesHeKnow == true)
         {
-            _visibility = Vector3.Dot(_agentPosition.forward, _agressorPosition.position);
+            _visibility = Vector3.Dot(_transform.forward, (_player.position - _transform.position).normalized);
 
             if (_visibility >= 0.50)
             {
                 _isHeAggressive = true;
             }
         }
-
     }
 
     private void StateOfCalm()
     {
+        _walkTimer -= Time.deltaTime;
         _agent.speed = _speed;
-        if (Vector3.Distance(_newDestination, _agentPosition.position) == 0)
-        {
-            _timer = _resetDestinationTimer;
-            _timer -= Time.deltaTime;
 
-            if (_timer == 0)
-            {
-                NewRandomTaget();
-                _timer = _resetDestinationTimer;
-            }
+        if (_walkTimer <= 0)
+        {
+            NewRandomTaget();
+            _walkTimer = _walkDelay;
         }
     }
 
     private void StateAggressive()
     {
-        _agent.SetDestination(_agressorPosition.position);
+        _agent.SetDestination(_player.position);
         _agent.speed = _speed * _speedMultiplier;
 
-        if (Vector3.Distance(_agressorPosition.position, _homeCenter.position) >= _pursuitDistance)
+        if (Vector3.Distance(_player.position, _homeCenter.position) >= _pursuitDistance)
         {
             _isHeAggressive = false;
+            _agent.SetDestination(_homeCenter.position);
         }
     }
 
     private void NewRandomTaget()
     {
-        RaycastHit hit;
         _newRandom = Random.insideUnitCircle; 
-        _newDestination = new Vector3( _agentPosition.position.x + _newRandom.x, 50 , _agentPosition.position.z + _newRandom.z);
-         
-        Physics.Raycast(_newDestination , -Vector3.up, out hit);
+        _newDestination = new Vector3(_newRandom.x, 0, _newRandom.y);
+        _newDestination *= _pursuitDistance / 2;
+        _newDestination.y = 10;
+        _newDestination += _homeCenter.position;
+
+        Physics.Raycast(_newDestination , Vector3.down * 10 * 2, out RaycastHit hit);
         
         _agent.SetDestination( hit.point);
-        Debug.Log( hit.point);
     }
 }
