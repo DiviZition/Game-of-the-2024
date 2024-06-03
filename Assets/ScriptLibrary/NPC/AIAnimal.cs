@@ -24,6 +24,7 @@ public class AIAnimal : MonoBehaviour
 
     private float _walkTimer;
     private float _checkPlayerTimer;
+    private float _persuitTimer; //Подсказка
 
     private bool _isHeAggressive = false;
     private bool _doesHeKnow;
@@ -37,6 +38,11 @@ public class AIAnimal : MonoBehaviour
 
     private void Update()
     {
+        //if (Input.GetKeyDown(KeyCode.P))
+        //{
+        //    _agent.isStopped = !_agent.isStopped;
+        //}
+
         BeastVision();
 
         if (_isHeAggressive == false)
